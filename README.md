@@ -2,7 +2,7 @@
  
 ## About
 
-This repository contains all neccessary bits to run the M3 workshop stack locally on either Mac or Windows. Before getting started with the workshop, make sure you have met the below prerequisites. During the workshop, we will be following the steps using a three-node M3DB cluster. If you don't have the capacity avaiable for this, we have created a single-node version to follow along with as well. 
+This repository contains all necessary bits to run the M3 workshop stack locally on either Mac or Windows. Before getting started with the workshop, make sure you have met the below prerequisites. During the workshop, we will be following the steps using a three-node M3DB cluster. If you don't have the capacity available for this, we have created a single-node version to follow along with as well. 
 
 ### Prerequisites 
 
@@ -83,15 +83,15 @@ Logs of the `provisioner` process can be seen either by following the output of 
 
 Once the stack is up and running, login into [Grafana](http://localhost:3030) using `admin:admin` credentials. Press "skip screen" in Grafana when prompting you to set a password. 
 
-Once in the Grafana UI, go to the [Explore](http://localhost:3000/explore) tab. From here, you will see a dropdown at the top of the page with the three datasources - Prometheus01, Prometheus02, and M3Query. 
+Once in the Grafana UI, go to the [Explore](http://localhost:3000/explore) tab. From here, you will see a dropdown at the top of the page with the three data sources - Prometheus01, Prometheus02, and M3Query. 
 
 ### Step 4: Explore the Prometheus data sources in Grafana via Explore and Dashboard tabs
 
-**Explore:** In the [Explore](http://localhost:3000/explore) tab of Grafana, you will see three datasources - Prometheus01, Prometheus02, and M3Query. Only the 2 Prometheus instances will be emitting metrics (scraping themselves), as remote read and write HTTP endpoints have not been enabled yet for your M3DB cluster. 
+**Explore:** In the [Explore](http://localhost:3000/explore) tab of Grafana, you will see three data sources - Prometheus01, Prometheus02, and M3Query. Only the 2 Prometheus instances will be emitting metrics (scraping themselves), as remote read and write HTTP endpoints have not been enabled yet for your M3DB cluster. 
 
-Try switching between the two Prometheus datasources, and running the query command: 'up{}'. Change the resolution of your graph to "Last 5 minutes" to get results. When swtiching between the two Prometheus instances, you will notice that each of the Prometheus instances are emitting slightly different sets of metrics (look under the "Table" section). In order to combine the metris from both instances, we will need to add the Remote Read and Write HTTP endpoints to our Prometheus configuratoins. This will allow metrics to then be sent to our M3DB cluster. 
+Try switching between the two Prometheus data sources, and running the query command: 'up{}'. Change the resolution of your graph to "Last 5 minutes" to get results. When switching between the two Prometheus instances, you will notice that each of the Prometheus instances are emitting slightly different sets of metrics (look under the "Table" section). In order to combine the metris from both instances, we will need to add the Remote Read and Write HTTP endpoints to our Prometheus configurations. This will allow metrics to then be sent to our M3DB cluster. 
 
-**Dashboard:** If you want to see multiple metrics for your data sources in one place, go to the [Dashboard](http://localhost:3000/?orgId=1) tab in Granfana. There will be some default dashboards already created, such as `Prometheus Stats`. Within the Dashboard, if you want to explore a certain metric (e.g. `prometheus_target_interval_length_seconds`) then click on the dropdown at the top of the metric and go to `Explore`. This will direct you to a more detailed look at that particular metric. Check it out! 
+**Dashboard:** If you want to see multiple metrics for your data sources in one place, go to the [Dashboard](http://localhost:3000/?orgId=1) tab in Grafana. There will be some default dashboards already created, such as `Prometheus Stats`. Within the Dashboard, if you want to explore a certain metric (e.g. `prometheus_target_interval_length_seconds`) then click on the dropdown at the top of the metric and go to `Explore`. This will direct you to a more detailed look at that particular metric. Check it out! 
 
 ### Step 5: Sending Prometheus metrics to the M3DB cluster
 
@@ -104,7 +104,7 @@ To start sending metrics from the two Prometheus instances to the M3DB cluster, 
 ### Step 6: Spin down one of the M3DB nodes (if running 3 node cluster) and query Prometheus metrics 
 
 - When performing reads or writes, M3 Coordinator and M3 Query utilize quorum logic in order to successfully complete requests (i.e. in a three node M3DB cluster, the Coordinator must successfully write at least 2 of the 3 copies of data to M3DB). In order to demonstrate this, we will be spinning down one of the M3DB nodes (**only if using 3 node cluster**), and querying against the remaining two DB nodes. 
-- For the workshop, we will spin down `m3db_data01` by running the follwoing command (**Note:** Do NOT stop the `m3db_seed` instance): 
+- For the workshop, we will spin down `m3db_data01` by running the following command (**Note:** Do NOT stop the `m3db_seed` instance): 
 
 ```$:~ docker-compose stop m3db_data01```
 
