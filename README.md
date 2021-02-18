@@ -2,8 +2,7 @@
  
 ## About
 
-This repository contains all neccessary bits to run the M3 workshop stack locally on either Mac or Windows. Before getting started with the workshop, make sure you have met the following prerequisites below. During the workshop, we will be following the steps using a three-node M3DB cluster. If you don't have the capacity avaiable for this, we have also created a single-node version to follow along for most of the steps.  
-
+This repository contains all neccessary bits to run the M3 workshop stack locally on either Mac or Windows. Before getting started with the workshop, make sure you have met the below prerequisites. During the workshop, we will be following the steps using a three-node M3DB cluster. If you don't have the capacity avaiable for this, we have created a single-node version to follow along with as well. 
 
 ### Prerequisites 
 
@@ -20,14 +19,14 @@ The stack consists of the latest versions of these components:
 - Two [Prometheus](https://prometheus.io/docs/introduction/overview/) instances;
 - A single [Grafana](https://grafana.com/) instance.
 
-Both Prometheus instances are configured to scrape themselves and a slightly different sets of services. During the 
-workshop, we'll demonstrate how querying the data on separate Prometheus instances will lead to slightly different results. 
+Both Prometheus instances are configured to scrape themselves, and a slightly different sets of services. During the 
+workshop, we'll demonstrate how querying the data on separate Prometheus instances will lead to different results. 
 
-The M3 Coordinator instance takes all read and write requests, and then distributes them to the cluster of M3DB nodes. It also implements Prometheus Remote Read and Write HTTP endpoints, which we'll use when modifying the Prometheus instances during the workshop.
+The M3 Coordinator instance will take all read and write requests, and then distributes them to the M3DB cluster. It will also implement [Prometheus Remote Read and Write HTTP endpoints](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write), which we'll use when modifying the Prometheus instances during the workshop.
 
-The M3 Query instance is used to query all data from the M3DB cluster via Grafana.
+Finally, the M3 Query instance will be used to query all data from the M3DB cluster via Grafana.
 
-At the start, Grafana will be configured with 3 different data sources - Prometheus01, Prometheus02, and M3Query: 
+From the start of the workshop, Grafana will be configured with 3 data sources - Prometheus01, Prometheus02, and M3Query: 
 
 - [Prometheus instance 1](http://localhost:9090)
 - [Prometheus instance 2](http://localhost:9091)
@@ -36,6 +35,8 @@ At the start, Grafana will be configured with 3 different data sources - Prometh
 ![Architecture diagram](./m3-workshop-schema.png)
 
 **List of container instances**
+
+Below is a list of the container instances with descriptions and names to be used throughout the workshop:
 
 | Container   | Endpoints 	| Notes		|
 | ----------- | ----------- |-----------|
@@ -74,13 +75,13 @@ m3-workshop_provisioner_1 exited with code 0
 
 Logs of the `provisioner` process can be seen either by following the output of the `docker-compose up` or by running the following command: ```docker-compose logs provisioner```
 
-** If wanting to run the single M3DB node, run the following command instead:
+** If wanting to run the **single M3DB node**, run the following command instead:
 
 ```$:~ docker-compose -f single-node.yml up```
 
 ### Step 3: Open up Grafana 
 
-Once the stack is up and running, login into the [Grafana](http://localhost:3030) using `admin:admin` credentials and then head to the [Explore](http://localhost:3000/explore) tab.
+Once the stack is up and running, login into [Grafana](http://localhost:3030) using `admin:admin` credentials, and then head to the [Explore](http://localhost:3000/explore) tab.
 
 **Note:** Press "skip screen" in Grafana when prompting you to set a password. 
 
@@ -90,7 +91,7 @@ In the [Explore](http://localhost:3000/explore) tab of Grafana, you will see thr
 
 Try switching between the two Prometheus datasources, and running the query command: 'up{}'. You will notice that each of the Prometheus instances are emitting slightly different sets of metrics, and that you would need to combine then in order to get a full picuture. In order to do this, we will be adding Remote Read and Write capabilities to the Prometheus instances in the next step. 
 
-### Step 5 - Sending Prometheus metrics to the M3DB cluster
+### Step 5: Sending Prometheus metrics to the M3DB cluster
 
 To start sending metrics scraped by the two Prometheus instances to the M3DB cluster, we need to enable remote write functionality:
 
@@ -99,7 +100,7 @@ To start sending metrics scraped by the two Prometheus instances to the M3DB clu
 - Once they're reloaded, head to the [Explore](http://localhost:3000/explore) tab and switch to the `M3 Query` data source to run PromQL queries (e.g. `up{}`. By doing so, you will now see that metrics across all of your instances are being emitted to the `M3 Query` data source. 
 
 
-### Step 6 - Spin down one of the M3DB nodes (if running 3 node cluster) and query Prometheus metrics 
+### Step 6: Spin down one of the M3DB nodes (if running 3 node cluster) and query Prometheus metrics 
 
 - When performing reads or writes, M3DB utilizes quorum logic in order to successfully complete requests. In order to demonstrate this, we will be spinning down of the M3DB nodes (**only if using 3 node cluster**) and querying against the remaining two nodes. 
 - For this workshop, we will spin down `m3db_data01` by running the follwoing command:
@@ -112,7 +113,7 @@ To start sending metrics scraped by the two Prometheus instances to the M3DB clu
 
 ```$:~ docker-compose start m3db_data01```
 
-### Step 7 - Spinning down the stack
+### Step 7: Spinning down the stack
 
 Press `Ctrl+C` to interrupt the already running `docker-compose up` process, or run the following command:
 
