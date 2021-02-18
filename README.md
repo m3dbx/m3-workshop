@@ -62,7 +62,7 @@ For the three node M3DB cluster, run the following command:
 
 ```$:~ docker-compose up```
 
-Once you see the following output (with code 0 at the end), the stack is configured and ready to be used: 
+Once you see the following output (with code 0 at the end), the stack is configured and ready to be used (this will take ~30 seconds): 
 
 ```
 provisioner_1      | Waiting until shards are marked as available
@@ -81,29 +81,30 @@ Logs of the `provisioner` process can be seen either by following the output of 
 
 ### Step 3: Open up Grafana 
 
-Once the stack is up and running, login into [Grafana](http://localhost:3030) using `admin:admin` credentials, and then head to the [Explore](http://localhost:3000/explore) tab.
+Once the stack is up and running, login into [Grafana](http://localhost:3030) using `admin:admin` credentials. Press "skip screen" in Grafana when prompting you to set a password. 
 
-**Note:** Press "skip screen" in Grafana when prompting you to set a password. 
+Once in the Grafana UI, go to the [Explore](http://localhost:3000/explore) tab. From here, you will see a dropdown at the top of the page with the three datasources - Prometheus01, Prometheus02, and M3Query. 
 
-### Step 4: Explore the Prometheus data sources in Grafana
+### Step 4: Explore the Prometheus data sources in Grafana via Explore and Dashboard tabs
 
-In the [Explore](http://localhost:3000/explore) tab of Grafana, you will see three datasources - Prometheus01, Prometheus02, and M3Query. Only the 2 Prometheus instances will be emitting metrics (scraping themselves), as remote read and write HTTP endpoints have not been enabled yet for your M3DB cluster. You can also see an example of a Grafana Dashboard for your metrics by X. 
+**Explore:** In the [Explore](http://localhost:3000/explore) tab of Grafana, you will see three datasources - Prometheus01, Prometheus02, and M3Query. Only the 2 Prometheus instances will be emitting metrics (scraping themselves), as remote read and write HTTP endpoints have not been enabled yet for your M3DB cluster. 
 
-Try switching between the two Prometheus datasources, and running the query command: 'up{}'. You will notice that each of the Prometheus instances are emitting slightly different sets of metrics, and that you would need to combine then in order to get a full picuture. In order to do this, we will be adding Remote Read and Write capabilities to the Prometheus instances in the next step. 
+Try switching between the two Prometheus datasources, and running the query command: 'up{}'. Change the resolution of your graph to "Last 5 minutes" to get results. When swtiching between the two Prometheus instances, you will notice that each of the Prometheus instances are emitting slightly different sets of metrics (look under the "Table" section). In order to combine the metris from both instances, we will need to add the Remote Read and Write HTTP endpoints to our Prometheus configuratoins. This will allow metrics to then be sent to our M3DB cluster. 
+
+**Dashboard:** If you want to see multiple metrics for your data sources in one place, go to the [Dashboard](http://localhost:3000/?orgId=1) tab in Granfana. There will be some default dashboards already created, such as `Prometheus Stats`. Within the Dashboard, if you want to explore a certain metric (e.g. `prometheus_target_interval_length_seconds`) then click on the dropdown at the top of the metric and go to `Explore`. This will direct you to a more detailed look at that particular metric. Check it out! 
 
 ### Step 5: Sending Prometheus metrics to the M3DB cluster
 
-To start sending metrics scraped by the two Prometheus instances to the M3DB cluster, we need to enable remote write functionality:
+To start sending metrics from the two Prometheus instances to the M3DB cluster, we need to enable remote write functionality:
 
-- In your code editor of choice (we are using VSCode), go to the Prometheus folder under Config. There will be two `yml` config files there. At the bottom of each config file, there will be a Remote Read and Write seciont commented out (in green). Uncomment both `remote_read` and `remote_write` blocks in [./config/prometheus/prometheus01.yml](./config/prometheus/prometheus01.yml) and [./config/prometheus/prometheus02.yml](./config/prometheus/prometheus02.yml) config files. Once this is done, save your changes locally. 
-- Then run `docker-compose restart prometheus01 prometheus02`;
-- Once they're reloaded, head to the [Explore](http://localhost:3000/explore) tab and switch to the `M3 Query` data source to run PromQL queries (e.g. `up{}`. By doing so, you will now see that metrics across all of your instances are being emitted to the `M3 Query` data source. 
-
+- In your code editor (e.g. VSCode), go to the Prometheus folder under Config. There will be two `yml` config files there. At the bottom of each config file, there will be a Remote Read and Write section commented out (in green). Uncomment both `remote_read` and `remote_write` blocks in [./config/prometheus/prometheus01.yml](./config/prometheus/prometheus01.yml) and [./config/prometheus/prometheus02.yml](./config/prometheus/prometheus02.yml) config files. Once this is done, save your changes locally. 
+- Then run `docker-compose restart prometheus01 prometheus02`
+- Once they're reloaded, head back to the [Explore](http://localhost:3000/explore) tab in Grafana, and switch to the `M3 Query` data source to run PromQL queries (e.g. `up{}`). By doing so, you will now see that metrics across both Prometheus instances are being emitted to the `M3 Query` data source - creating a single point of query across your instances. 
 
 ### Step 6: Spin down one of the M3DB nodes (if running 3 node cluster) and query Prometheus metrics 
 
-- When performing reads or writes, M3DB utilizes quorum logic in order to successfully complete requests. In order to demonstrate this, we will be spinning down of the M3DB nodes (**only if using 3 node cluster**) and querying against the remaining two nodes. 
-- For this workshop, we will spin down `m3db_data01` by running the follwoing command:
+- When performing reads or writes, M3 Coordinator and M3 Query utilize quorum logic in order to successfully complete requests (i.e. in a three node M3DB cluster, the Coordinator must successfully write at least 2 of the 3 copies of data to M3DB). In order to demonstrate this, we will be spinning down one of the M3DB nodes (**only if using 3 node cluster**), and querying against the remaining two DB nodes. 
+- For the workshop, we will spin down `m3db_data01` by running the follwoing command (**Note:** Do NOT stop the `m3db_seed` instance): 
 
 ```$:~ docker-compose stop m3db_data01```
 
