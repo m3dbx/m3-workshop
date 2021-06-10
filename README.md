@@ -42,7 +42,7 @@ Below is a list of the container instances with descriptions and names to be use
 | ----------- | ----------- |-----------|
 | prometheus01| [http://localhost:9090](http://localhost:9090)|The first Prometheus instance, scrapes itself and all M3 services, except M3 Query|
 | prometheus02| [http://localhost:9091](http://localhost:9091)|The second Prometheus instance, scrapes all M3 services in the stack|
-| grafana| [http://localhost:3030](http://localhost:3030)||
+| grafana| [http://localhost:3000](http://localhost:3000)||
 | m3db_seed	  | localhost:2379; localhost:909[0-2]| M3DB instance, running built-in etcd service (2379 TCP port). Runs in both single-node and cluster modes|
 | m3db_data01 | localhost:909[0-2]  | This M3DB node runs in cluster mode only |
 | m3db_data02 | localhost:909[0-2]  | This M3DB node runs in cluster mode only |
@@ -81,7 +81,7 @@ Logs of the `provisioner` process can be seen either by following the output of 
 
 ### Step 3: Open up Grafana 
 
-Once the stack is up and running, login into [Grafana](http://localhost:3030) using `admin:admin` credentials. Press "skip screen" in Grafana when prompting you to set a password. 
+Once the stack is up and running, login into [Grafana](http://localhost:3000) using `admin:admin` credentials. Press "skip screen" in Grafana when prompting you to set a password. 
 
 Once in the Grafana UI, go to the [Explore](http://localhost:3000/explore) tab. From here, you will see a dropdown at the top of the page with the three data sources - Prometheus01, Prometheus02, and M3Query. 
 
